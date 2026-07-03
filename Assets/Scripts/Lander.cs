@@ -14,8 +14,19 @@ public class Lander : MonoBehaviour
     public class LanderEventArgs : EventArgs
     {
         public int Score;
+        public landingType landingType;
+        public float dotVector;
+        public float landingSpeed;
+        public float timeElapsed;
     }
     public static Lander Instance { get; private set; }
+    public enum landingType
+    {
+        Success,
+        WrongLadingArea,
+        SteepAngle,
+        TooFast
+    }
     private float Maxfuel = 20f;
     private float fuel;
 
@@ -76,27 +87,50 @@ public class Lander : MonoBehaviour
         }
 
         float softLandingSpeed = 10f;
+        float dotVector = Vector2.Dot(Vector2.up, transform.up);
+
         if(collision.relativeVelocity.magnitude > softLandingSpeed)
         {
-            Debug.Log("Landed too hard bro!");
-            return;
-        }
-
-        float dotVector = Vector2.Dot(Vector2.up, transform.up);
-        if(dotVector < 0.9f)
-        {
-            //Debug.Log("You Crashed! deenga");
+            //Debug.Log("Landed too hard bro!");
+            OnLanded?.Invoke(this, new LanderEventArgs 
+            {   
+            Score = 0,
+            landingType = landingType.TooFast,
+            dotVector = dotVector,
+            landingSpeed = collision.relativeVelocity.magnitude ,
+            timeElapsed = GameManager.Instance.GetTimeElapsed()
+            });
             return;
         }
         
-        int maxScore = 1000;
-        float ScoreMultiplier = 100f;
-        int score = maxScore - Mathf.RoundToInt(collision.relativeVelocity.magnitude * ScoreMultiplier);
-        Debug.Log("Score multiplier: " + pad.GetScoreMultiplier());
-        score += Mathf.RoundToInt(dotVector * ScoreMultiplier * pad.GetScoreMultiplier());
+        if(dotVector < 0.9f)
+        {
+            //Debug.Log("You Crashed! deenga");
+            OnLanded?.Invoke(this, new LanderEventArgs 
+            {   
+            Score = 0,
+            landingType = landingType.SteepAngle,
+            dotVector = dotVector,
+            landingSpeed = collision.relativeVelocity.magnitude ,
+            timeElapsed = GameManager.Instance.GetTimeElapsed()
+            });
+            return;
+        }
+
+        float maxScore = 1000f;
+        float speedFactor = Mathf.InverseLerp(softLandingSpeed, 0f, collision.relativeVelocity.magnitude);
+        float angleFactor = Mathf.InverseLerp(0.9f, 1f, dotVector);
+        int score = Mathf.RoundToInt(maxScore * ((speedFactor + angleFactor) * 0.5f));
+        score *= pad.GetScoreMultiplier();
         score = Mathf.Max(0, score);
 
-        OnLanded?.Invoke(this, new LanderEventArgs { Score = score });
+        OnLanded?.Invoke(this, new LanderEventArgs 
+        {   Score = score,
+            landingType = landingType.Success,
+            dotVector = dotVector,
+            landingSpeed = collision.relativeVelocity.magnitude ,
+            timeElapsed = GameManager.Instance.GetTimeElapsed()
+        });
         
         //Debug.Log("Successful Landing! Score: " + score);
 
