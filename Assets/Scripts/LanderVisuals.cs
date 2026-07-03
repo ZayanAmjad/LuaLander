@@ -5,7 +5,7 @@ public class LanderVisual : MonoBehaviour
     [SerializeField] private ParticleSystem LeftThrusterParticle;
     [SerializeField] private ParticleSystem MiddleThrusterParticle;
     [SerializeField] private ParticleSystem RightThrusterParticle;
-
+    [SerializeField] private GameObject ExplosionParticle;
     private Lander lander;
     private void Awake()
     {
@@ -56,6 +56,26 @@ public class LanderVisual : MonoBehaviour
         else
         {
             thrusterParticle.Stop();
+        }
+    }
+
+    private void Start()
+    {
+        lander.OnLanded += Lander_OnLanded;
+    }
+
+    private void Lander_OnLanded(object sender, Lander.LanderEventArgs e)
+    {
+        switch (e.landingType)
+        {
+            case Lander.landingType.Success:
+                break;
+            case Lander.landingType.WrongLadingArea:
+            case Lander.landingType.SteepAngle:
+            case Lander.landingType.TooFast:
+                Instantiate(ExplosionParticle, transform.position, Quaternion.identity);
+                gameObject.SetActive(false);
+                break;
         }
     }
 
