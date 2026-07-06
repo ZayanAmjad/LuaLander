@@ -68,7 +68,7 @@ public class Lander : MonoBehaviour
         switch(state)
         {
             case State.WaitingToStart:
-                if(Keyboard.current.upArrowKey.isPressed || Keyboard.current.leftArrowKey.isPressed || Keyboard.current.rightArrowKey.isPressed)
+                if(GameInput.Instance.isUpPressed() || GameInput.Instance.isLeftPressed() || GameInput.Instance.isRightPressed())
                 {
                     landerRigidBody.gravityScale = GRAVITY_NORMAL;
                     state = State.Normal;
@@ -76,7 +76,7 @@ public class Lander : MonoBehaviour
                 }
                 break;
             case State.Normal:
-                if(Keyboard.current.upArrowKey.isPressed || Keyboard.current.leftArrowKey.isPressed || Keyboard.current.rightArrowKey.isPressed)
+                if(GameInput.Instance.isUpPressed() || GameInput.Instance.isLeftPressed() || GameInput.Instance.isRightPressed())
                 {
                     consumeFuel();
                 }
@@ -86,19 +86,19 @@ public class Lander : MonoBehaviour
                     return;
                 }
 
-                if(Keyboard.current.upArrowKey.isPressed){
+                if(GameInput.Instance.isUpPressed()){
                     float force = 1000f;
                     landerRigidBody.AddForce(force * transform.up * Time.deltaTime);
                     OnMiddleForce?.Invoke(this, EventArgs.Empty);
                 }
 
-                if(Keyboard.current.leftArrowKey.isPressed){
+                if(GameInput.Instance.isLeftPressed()){
                     float turnSpeed  = +50f;
                     landerRigidBody.AddTorque(turnSpeed * Time.deltaTime);
                     OnLeftForce?.Invoke(this, EventArgs.Empty);
                 }   
 
-                if(Keyboard.current.rightArrowKey.isPressed){
+                if(GameInput.Instance.isRightPressed()){
                     float turnSpeed  = -50f;
                     landerRigidBody.AddTorque(turnSpeed * Time.deltaTime);
                     OnRightForce?.Invoke(this, EventArgs.Empty);

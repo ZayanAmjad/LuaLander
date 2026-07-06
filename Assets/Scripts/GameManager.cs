@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections;
 using UnityEngine.SceneManagement;
 using Unity.Cinemachine;
+using System;
 
 public class GameManager : MonoBehaviour
 {
@@ -10,6 +11,9 @@ public class GameManager : MonoBehaviour
     private float timeElapsed = 0f;
     private bool isTimerActive = false;
     private Lander boundLander;
+
+    public event EventHandler OnGamePaused;
+    public event EventHandler OnGameResumed;
 
     public static GameManager Instance { get; private set; }
 
@@ -19,7 +23,9 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        GameInput.Instance.OnMenuPressed += Game_OnMenuPressed;
         InitializeLevel();
+        
     }
 
     private void OnEnable()
@@ -81,9 +87,26 @@ public class GameManager : MonoBehaviour
         LoadCurrentLevel();
     }
 
+    private void Game_OnMenuPressed(object sender, System.EventArgs e)
+    {
+        PauseUnPauseGame();
+    }
+
+    public void PauseUnPauseGame()
+    {
+        if (Time.timeScale == 1f)
+        {
+            Pause();
+        }
+        else
+        {
+            Resume();
+        }
+    }
+
     private void ResolveSceneReferences()
     {
-        cinemachineCamera = Object.FindFirstObjectByType<CinemachineCamera>();
+        cinemachineCamera = UnityEngine.Object.FindFirstObjectByType<CinemachineCamera>();
     }
 
     private void BindLander()
@@ -211,5 +234,17 @@ public class GameManager : MonoBehaviour
     public int GetCurrentLevel()
     {
         return currentLevel;
+    }
+
+    public void Pause()
+    {
+        Time.timeScale = 0f;
+        OnGamePaused?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void Resume()
+    {
+        Time.timeScale = 1f;
+        OnGameResumed?.Invoke(this, EventArgs.Empty);
     }
 }
