@@ -1,14 +1,25 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 public class LandedUI : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI dataText;
+    [SerializeField] private Button restartButton;
 
     private void Start()
     {
         Lander.Instance.OnLanded += Lander_OnLanded;
         Hide();
+    }
+
+    private void Awake()
+    {
+        restartButton.onClick.AddListener(() =>
+        {
+            SceneManager.LoadScene(0);
+        });
     }
 
     private void Lander_OnLanded(object sender, Lander.LanderEventArgs e)

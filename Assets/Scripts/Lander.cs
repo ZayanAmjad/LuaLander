@@ -36,7 +36,7 @@ public class Lander : MonoBehaviour
     }
     private float Maxfuel = 20f;
     private float fuel;
-    private const float GRAVITY_NORMAL = 0.5f;
+    private const float GRAVITY_NORMAL = 0.7f;
     public enum State
     {
         WaitingToStart,
