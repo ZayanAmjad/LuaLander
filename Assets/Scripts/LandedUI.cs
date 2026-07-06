@@ -2,11 +2,16 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System;
+
 public class LandedUI : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI dataText;
-    [SerializeField] private Button restartButton;
+    [SerializeField] private TextMeshProUGUI nextButtonText;
+    [SerializeField] private Button nextButton;
+
+    private Action nextButtonAction;
 
     private void Start()
     {
@@ -16,9 +21,9 @@ public class LandedUI : MonoBehaviour
 
     private void Awake()
     {
-        restartButton.onClick.AddListener(() =>
+        nextButton.onClick.AddListener(() =>
         {
-            SceneManager.LoadScene(0);
+            nextButtonAction?.Invoke( );
         });
     }
 
@@ -29,15 +34,23 @@ public class LandedUI : MonoBehaviour
         {
             case Lander.landingType.Success:
                 titleText.text = "Successful Landing!";
+                nextButtonText.text = "Next Level";
+                nextButtonAction = GameManager.Instance.LoadNextLevel;
                 break;
             case Lander.landingType.WrongLadingArea:
                 titleText.text = "Crash Landing!";
+                nextButtonText.text = "Restart Level";
+                nextButtonAction = GameManager.Instance.RestartLevel;
                 break;
             case Lander.landingType.SteepAngle:
                 titleText.text = "Steep Angle!";
+                nextButtonText.text = "Restart Level";
+                nextButtonAction = GameManager.Instance.RestartLevel;
                 break;
             case Lander.landingType.TooFast:
                 titleText.text = "Too Fast!";
+                nextButtonText.text = "Restart Level";
+                nextButtonAction = GameManager.Instance.RestartLevel;
                 break;
         }
             float timeElapsed = Mathf.Round(GameManager.Instance.GetTimeElapsed());

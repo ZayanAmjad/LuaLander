@@ -23,6 +23,7 @@ public class UI : MonoBehaviour
             fuelBar.fillAmount = Lander.Instance.GetFuel();
 
             statsText.text = 
+                GameManager.Instance.GetCurrentLevel().ToString() + '\n' +
                 GameManager.Instance.GetScore().ToString() + '\n' +
                 Mathf.Round(GameManager.Instance.GetTimeElapsed()).ToString() + "s" + '\n' +
                 Mathf.Abs(Mathf.Round(Lander.Instance.GetSpeedX())).ToString() + '\n' +
