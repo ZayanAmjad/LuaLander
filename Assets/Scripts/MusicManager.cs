@@ -6,7 +6,7 @@ public class MusicManager : MonoBehaviour
     private AudioSource musicAudioSource;
     private static float musicTime;
 
-    private static int musicVolume = 6;
+    private static int musicVolume = 3;
     private const int MAXMUSIC = 10;
 
     public event EventHandler OnMusicVolumeChanged;

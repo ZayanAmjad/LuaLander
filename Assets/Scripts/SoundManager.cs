@@ -14,7 +14,7 @@ public class SoundManager : MonoBehaviour
 
     public static SoundManager Instance { get; private set; }
 
-    private static int SoundVolume = 6;
+    private static int SoundVolume = 3;
     private const int MAXSOUND = 10;
 
     private Lander boundLander;
@@ -47,7 +47,7 @@ public class SoundManager : MonoBehaviour
     private void Start()
     {
         BindLander();
-        
+
     }
 
     private void HandleSceneLoaded(Scene scene, LoadSceneMode mode)

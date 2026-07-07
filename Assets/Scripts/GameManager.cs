@@ -190,7 +190,7 @@ public class GameManager : MonoBehaviour
     {
         if (boundLander == null)
         {
-            Debug.LogWarning("Lander instance not found when loading level.");
+            //Debug.LogWarning("Lander instance not found when loading level.");
             return;
         }
 
@@ -246,7 +246,7 @@ public class GameManager : MonoBehaviour
         totalScore += score;
         totalTimeElapsed += timeElapsed;
 
-        Debug.LogWarning($"No next GameLevel found for level {nextLevel}. Loading Game Over scene '{gameOverSceneName}'.");
+        //Debug.LogWarning($"No next GameLevel found for level {nextLevel}. Loading Game Over scene '{gameOverSceneName}'.");
         SceneManager.LoadScene(gameOverSceneName);
     }
 

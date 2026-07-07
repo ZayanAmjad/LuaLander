@@ -56,7 +56,8 @@ public class Lander : MonoBehaviour
     
     private void Awake()
     {
-        landerRigidBody = GetComponent<Rigidbody2D>();  
+        landerRigidBody = GetComponent<Rigidbody2D>(); 
+        landerRigidBody.angularDamping = 2f; 
         Instance = this;  
         fuel = Maxfuel;
         state = State.WaitingToStart;
@@ -86,7 +87,7 @@ public class Lander : MonoBehaviour
                 {
                     return;
                 }
-
+                //float rotationSpeed = 50f;
                 if(GameInput.Instance.isUpPressed()){
                     float force = 1000f;
                     landerRigidBody.AddForce(force * transform.up * Time.deltaTime);
@@ -96,12 +97,14 @@ public class Lander : MonoBehaviour
                 if(GameInput.Instance.isLeftPressed()){
                     float turnSpeed  = +50f;
                     landerRigidBody.AddTorque(turnSpeed * Time.deltaTime);
+                    //landerRigidBody.angularVelocity = rotationSpeed;
                     OnLeftForce?.Invoke(this, EventArgs.Empty);
                 }   
 
                 if(GameInput.Instance.isRightPressed()){
                     float turnSpeed  = -50f;
                     landerRigidBody.AddTorque(turnSpeed * Time.deltaTime);
+                    //landerRigidBody.angularVelocity = -rotationSpeed;
                     OnRightForce?.Invoke(this, EventArgs.Empty);
                 }
                 break;
@@ -164,6 +167,11 @@ public class Lander : MonoBehaviour
             return;
         }
 
+        //landerRigidBody.linearVelocity = Vector2.zero;
+        //landerRigidBody.angularVelocity = 0f;
+        //landerRigidBody.constraints = RigidbodyConstraints2D.FreezeAll;
+        transform.rotation = Quaternion.identity;
+        
         float maxScore = 1000f;
         float speedFactor = Mathf.InverseLerp(softLandingSpeed, 0f, collision.relativeVelocity.magnitude);
         float angleFactor = Mathf.InverseLerp(0.9f, 1f, dotVector);
