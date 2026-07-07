@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     private float timeElapsed = 0f;
     private bool isTimerActive = false;
     private Lander boundLander;
+    private GameInput boundInput;
 
     public event EventHandler OnGamePaused;
     public event EventHandler OnGameResumed;
@@ -19,11 +20,13 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private CinemachineCamera cinemachineCamera;
     [SerializeField] private List<GameLevel> gameLevels;
+    [SerializeField] private string gameOverSceneName = "GameOverScene";
     private static int currentLevel = 1;
+    private int totalScore = 0;
+    private float totalTimeElapsed = 0f;
 
     private void Start()
     {
-        GameInput.Instance.OnMenuPressed += Game_OnMenuPressed;
         InitializeLevel();
         
     }
@@ -67,6 +70,13 @@ public class GameManager : MonoBehaviour
 
     private void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        if (scene.name == "MainMenuScene")
+        {
+            totalScore = 0;
+            totalTimeElapsed = 0f;
+            currentLevel = 1;
+        }
+
         StartCoroutine(InitializeLevelNextFrame());
     }
 
@@ -84,7 +94,23 @@ public class GameManager : MonoBehaviour
 
         ResolveSceneReferences();
         BindLander();
+        BindInput();
         LoadCurrentLevel();
+    }
+
+    private void BindInput()
+    {
+        if (boundInput != null)
+        {
+            boundInput.OnMenuPressed -= Game_OnMenuPressed;
+        }
+
+        boundInput = GameInput.Instance;
+
+        if (boundInput != null)
+        {
+            boundInput.OnMenuPressed += Game_OnMenuPressed;
+        }
     }
 
     private void Game_OnMenuPressed(object sender, System.EventArgs e)
@@ -206,14 +232,22 @@ public class GameManager : MonoBehaviour
         {
             if (level.LevelNumber == nextLevel)
             {
+                // accumulate this level's score/time into totals before advancing
+                totalScore += score;
+                totalTimeElapsed += timeElapsed;
+
                 currentLevel = nextLevel;
                 SceneManager.LoadScene(0);
                 return;
             }
         }
 
-        Debug.LogWarning($"No next GameLevel found for level {nextLevel}. Restarting current level instead.");
-        SceneManager.LoadScene(0);
+        // No next level: accumulate this level then go to Game Over
+        totalScore += score;
+        totalTimeElapsed += timeElapsed;
+
+        Debug.LogWarning($"No next GameLevel found for level {nextLevel}. Loading Game Over scene '{gameOverSceneName}'.");
+        SceneManager.LoadScene(gameOverSceneName);
     }
 
     public void RestartLevel()
@@ -229,6 +263,16 @@ public class GameManager : MonoBehaviour
     public float GetTimeElapsed()
     {
         return timeElapsed;
+    }
+
+    public int GetTotalScore()
+    {
+        return totalScore;
+    }
+
+    public float GetTotalTime()
+    {
+        return totalTimeElapsed;
     }
 
     public int GetCurrentLevel()

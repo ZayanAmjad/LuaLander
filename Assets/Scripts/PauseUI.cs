@@ -4,12 +4,17 @@ using UnityEngine.UI;
 public class PauseUI : MonoBehaviour
 {
     [SerializeField] private Button PauseButton;
+    [SerializeField] private Button MainMenuButton;
 
     private void Awake()
     {
         PauseButton.onClick.AddListener(() =>
         {
             GameManager.Instance.Resume();
+        });
+        MainMenuButton.onClick.AddListener(() =>
+        {
+            SceneLoader.LoadScene(SceneLoader.Scene.MainMenuScene);
         });
     }
 

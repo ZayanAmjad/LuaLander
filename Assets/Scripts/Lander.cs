@@ -10,6 +10,7 @@ public class Lander : MonoBehaviour
     public event EventHandler OnMiddleForce;
     public event EventHandler OnBeforeForce;
     public event EventHandler OnCoinPickup;
+    public event EventHandler OnFuelPickup;
     public event EventHandler<LanderEventArgs> OnLanded;
     public class LanderEventArgs : EventArgs
     {
@@ -193,6 +194,7 @@ public class Lander : MonoBehaviour
             {
                 fuel = Maxfuel;
             }
+            OnFuelPickup?.Invoke(this, EventArgs.Empty);
             fuelPickup.Destroy();
             return;
         }
