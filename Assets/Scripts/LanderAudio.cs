@@ -13,11 +13,30 @@ public class LanderAudio : MonoBehaviour
    private void Start()
    {
        ThrusterAudioSource.Pause();
+       ThrusterAudioSource.volume = SoundManager.Instance.getSoundVolumeNormalized();
         lander.OnLeftForce += Lander_OnLeftForce;
         lander.OnRightForce += Lander_OnRightForce;
         lander.OnMiddleForce += Lander_OnMiddleForce;
         lander.OnBeforeForce += Lander_OnBeforeForce;
+
+        SoundManager.Instance.OnSoundVolumeChanged += SoundManager_OnSoundVolumeChanged;
    }
+
+    private void OnDestroy()
+    {
+        if (lander != null)
+        {
+            lander.OnLeftForce -= Lander_OnLeftForce;
+            lander.OnRightForce -= Lander_OnRightForce;
+            lander.OnMiddleForce -= Lander_OnMiddleForce;
+            lander.OnBeforeForce -= Lander_OnBeforeForce;
+        }
+
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.OnSoundVolumeChanged -= SoundManager_OnSoundVolumeChanged;
+        }
+    }
 
    private void Lander_OnLeftForce(object sender, System.EventArgs e)
    {
@@ -40,5 +59,10 @@ public class LanderAudio : MonoBehaviour
     private void Lander_OnBeforeForce(object sender, System.EventArgs e)
     {
         ThrusterAudioSource.Pause();
+    }
+
+    private void SoundManager_OnSoundVolumeChanged(object sender, System.EventArgs e)
+    {
+        ThrusterAudioSource.volume = SoundManager.Instance.getSoundVolumeNormalized();
     }
 }
