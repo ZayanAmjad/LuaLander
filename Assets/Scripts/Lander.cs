@@ -38,6 +38,7 @@ public class Lander : MonoBehaviour
     private float Maxfuel = 20f;
     private float fuel;
     private const float GRAVITY_NORMAL = 0.7f;
+    private bool hasResolvedLanding = false;
     public enum State
     {
         WaitingToStart,
@@ -117,9 +118,14 @@ public class Lander : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        if (hasResolvedLanding)
+        {
+            return;
+        }
 
         if(!collision.gameObject.TryGetComponent(out LandingPad pad))
         {
+            hasResolvedLanding = true;
             //Debug.Log("You Crashed!");
             OnLanded?.Invoke(this, new LanderEventArgs 
             {
@@ -139,6 +145,7 @@ public class Lander : MonoBehaviour
 
         if(collision.relativeVelocity.magnitude > softLandingSpeed)
         {
+            hasResolvedLanding = true;
             //Debug.Log("Landed too hard bro!");
             OnLanded?.Invoke(this, new LanderEventArgs 
             {   
@@ -154,6 +161,7 @@ public class Lander : MonoBehaviour
         
         if(dotVector < 0.9f)
         {
+            hasResolvedLanding = true;
             //Debug.Log("You Crashed! deenga");
             OnLanded?.Invoke(this, new LanderEventArgs 
             {   
@@ -167,9 +175,10 @@ public class Lander : MonoBehaviour
             return;
         }
 
-        //landerRigidBody.linearVelocity = Vector2.zero;
-        //landerRigidBody.angularVelocity = 0f;
-        //landerRigidBody.constraints = RigidbodyConstraints2D.FreezeAll;
+        hasResolvedLanding = true;
+        landerRigidBody.linearVelocity = Vector2.zero;
+        landerRigidBody.angularVelocity = 0f;
+        landerRigidBody.constraints = RigidbodyConstraints2D.FreezeAll;
         transform.rotation = Quaternion.identity;
         
         float maxScore = 1000f;

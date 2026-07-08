@@ -1691,7 +1691,7 @@ MonoBehaviour:
   levelNumber: 2
   LanderPosition: {fileID: 731368128233820300}
   CameraStartTarget: {fileID: 4181956726310079443}
-  zoomOutSize: 25
+  zoomOutSize: 30
 --- !u!1 &7123721282577708730
 GameObject:
   m_ObjectHideFlags: 0

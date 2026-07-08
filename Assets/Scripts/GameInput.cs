@@ -1,6 +1,5 @@
 using UnityEngine;
 using System;
-using UnityEngine.InputSystem.EnhancedTouch;
 
 public class GameInput : MonoBehaviour
 {
@@ -11,22 +10,17 @@ public class GameInput : MonoBehaviour
 
     void OnEnable()
     {
-        // EnhancedTouch requires explicit activation to manage performance overhead
-        EnhancedTouchSupport.Enable();
-    }
+        if (actions == null)
+        {
+            actions = new InputActions();
+            actions.Player.Menu.performed += Menu_performed;
+        }
 
-    void OnDisable()
-    {
-        // Disable when the script is inactive to clean up resources
-        EnhancedTouchSupport.Disable();
+        actions.Enable();
     }
 
     void Awake(){
         Instance = this;
-        actions = new InputActions();
-        actions.Enable();
-
-        actions.Player.Menu.performed += Menu_performed;
     }
 
     private void Menu_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj)
@@ -45,7 +39,21 @@ public class GameInput : MonoBehaviour
         return actions.Player.LanderLeft.IsPressed();
     }
 
+    private void OnDisable()
+    {
+        if (actions != null)
+        {
+            actions.Disable();
+        }
+    }
+
     private void OnDestroy(){
-        actions.Disable();
+        if (actions != null)
+        {
+            actions.Player.Menu.performed -= Menu_performed;
+            actions.Disable();
+            actions.Dispose();
+            actions = null;
+        }
     }
 }

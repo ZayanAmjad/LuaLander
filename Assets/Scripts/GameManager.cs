@@ -20,7 +20,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private CinemachineCamera cinemachineCamera;
     [SerializeField] private List<GameLevel> gameLevels;
-    [SerializeField] private string gameOverSceneName = "GameOverScene";
+
     private static int currentLevel = 1;
     private int totalScore = 0;
     private float totalTimeElapsed = 0f;
@@ -88,6 +88,7 @@ public class GameManager : MonoBehaviour
 
     private void InitializeLevel()
     {
+        Time.timeScale = 1f;
         score = 0;
         timeElapsed = 0f;
         isTimerActive = false;
@@ -237,7 +238,7 @@ public class GameManager : MonoBehaviour
                 totalTimeElapsed += timeElapsed;
 
                 currentLevel = nextLevel;
-                SceneManager.LoadScene(0);
+                SceneLoader.LoadScene(SceneLoader.Scene.SampleScene);
                 return;
             }
         }
@@ -247,12 +248,12 @@ public class GameManager : MonoBehaviour
         totalTimeElapsed += timeElapsed;
 
         //Debug.LogWarning($"No next GameLevel found for level {nextLevel}. Loading Game Over scene '{gameOverSceneName}'.");
-        SceneManager.LoadScene(gameOverSceneName);
+        SceneLoader.LoadScene(SceneLoader.Scene.GameOverScene);
     }
 
     public void RestartLevel()
     {
-        SceneManager.LoadScene(0);
+        SceneLoader.LoadScene(SceneLoader.Scene.SampleScene);
     }
 
     public int GetScore()
