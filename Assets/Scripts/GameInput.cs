@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using UnityEngine.InputSystem.EnhancedTouch;
 
 public class GameInput : MonoBehaviour
 {
@@ -7,6 +8,19 @@ public class GameInput : MonoBehaviour
     public EventHandler OnMenuPressed;
     public static GameInput Instance { get; private set; }
     private InputActions actions;
+
+    void OnEnable()
+    {
+        // EnhancedTouch requires explicit activation to manage performance overhead
+        EnhancedTouchSupport.Enable();
+    }
+
+    void OnDisable()
+    {
+        // Disable when the script is inactive to clean up resources
+        EnhancedTouchSupport.Disable();
+    }
+
     void Awake(){
         Instance = this;
         actions = new InputActions();
