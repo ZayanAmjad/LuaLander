@@ -64,6 +64,14 @@ public class LanderVisual : MonoBehaviour
         lander.OnLanded += Lander_OnLanded;
     }
 
+    private void OnDestroy()
+    {
+        if (lander != null)
+        {
+            lander.OnLanded -= Lander_OnLanded;
+        }
+    }
+
     private void Lander_OnLanded(object sender, Lander.LanderEventArgs e)
     {
         switch (e.landingType)

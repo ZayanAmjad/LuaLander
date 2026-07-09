@@ -38,6 +38,7 @@ public class Lander : MonoBehaviour
     private float Maxfuel = 20f;
     private float fuel;
     private const float GRAVITY_NORMAL = 0.7f;
+    private const float MAX_SPEED = 15f;
     private bool hasResolvedLanding = false;
     public enum State
     {
@@ -112,6 +113,8 @@ public class Lander : MonoBehaviour
             case State.GameOver:
                 break;
         }
+
+        landerRigidBody.linearVelocity = Vector2.ClampMagnitude(landerRigidBody.linearVelocity, MAX_SPEED);
 
              
     }
@@ -222,6 +225,40 @@ public class Lander : MonoBehaviour
             coinPickup.Destroy();
             return;
         }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (Time.timeScale <= 0f)
+        {
+            return;
+        }
+
+        if(collision.gameObject.TryGetComponent(out Boundary boundary))
+        {
+            
+            HandleOutOfBounds();
+        }
+    }
+
+    private void HandleOutOfBounds()
+    {
+        if (hasResolvedLanding)
+        {
+            return;
+        }
+
+        hasResolvedLanding = true;
+        //Debug.Log("You went out of bounds!");
+        OnLanded?.Invoke(this, new LanderEventArgs 
+        {   
+            Score = 0,
+            landingType = landingType.WrongLadingArea,
+            dotVector = Vector2.Dot(Vector2.up, transform.up),
+            landingSpeed = landerRigidBody.linearVelocity.magnitude ,
+            timeElapsed = GameManager.Instance.GetTimeElapsed()
+        });
+        SetState(State.GameOver);
     }
 
     public float GetSpeedX()
