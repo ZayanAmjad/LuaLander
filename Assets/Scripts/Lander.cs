@@ -59,7 +59,8 @@ public class Lander : MonoBehaviour
     private void Awake()
     {
         landerRigidBody = GetComponent<Rigidbody2D>(); 
-        landerRigidBody.angularDamping = 2f; 
+        landerRigidBody.angularDamping = 2f;
+        landerRigidBody.linearDamping = 0.3f; 
         Instance = this;  
         fuel = Maxfuel;
         state = State.WaitingToStart;
